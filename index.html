@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Android volley sample : sample project of android volley library">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Android volley sample</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/sajith4u/Android_volley_Sample">View on GitHub</a>
+
+          <h1 id="project_title">Android volley sample</h1>
+          <h2 id="project_tagline">sample project of android volley library</h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/sajith4u/Android_volley_Sample/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/sajith4u/Android_volley_Sample/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p>In this post i will describe how to use android volley library for your json request.First you have to download android volley library.I have uploaded this sample projcet to github so you can download volley.jar file from here(<a href="https://github.com/sajith4u/Android_volley_Sample/tree/master/Android_Volley/libs).Or">https://github.com/sajith4u/Android_volley_Sample/tree/master/Android_Volley/libs).Or</a> you can download from here(<a href="https://drive.google.com/?tab=jo&amp;authuser=0#folders/0B6boUJ62bUIXZUJQbUdoS08tMms).First">https://drive.google.com/?tab=jo&amp;authuser=0#folders/0B6boUJ62bUIXZUJQbUdoS08tMms).First</a> You have to add AppController class to your package.Befor that make sure you have put volley.jar file in to your lib folder.</p>
+
+<p>package com.example.Android_Volley;
+import android.app.Application;
+import android.text.TextUtils;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
+/**</p>
+
+<ul>
+<li><p>Created with IntelliJ IDEA.</p></li>
+<li><p>User: Sajith</p></li>
+<li><p>Date: 9/8/14</p></li>
+<li><p>Time: 9:04 PM</p></li>
+<li>
+<p>To change this template use File | Settings | File Templates.</p>
+
+<p>*/</p>
+</li>
+</ul><p>public class AppController extends Application {
+    public static final String TAG = AppController.class.getSimpleName();
+    private RequestQueue mRequestQueue;
+    private static AppController mInstance;
+    <a href="https://github.com/Override" class="user-mention">@Override</a></p>
+
+<pre><code>public void onCreate() {
+    super.onCreate();
+    mInstance = this;
+}
+
+public static synchronized AppController getInstance() {
+    return mInstance;
+}
+public RequestQueue getRequestQueue() {
+
+    if (mRequestQueue == null) {
+        mRequestQueue = Volley.newRequestQueue(getApplicationContext());
+    }
+    return mRequestQueue;
+}
+public &lt;T&gt; void addToRequestQueue(Request&lt;T&gt; req, String tag) {
+    req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
+    getRequestQueue().add(req);
+}
+
+public &lt;T&gt; void addToRequestQueue(Request&lt;T&gt; req) {
+    req.setTag(TAG);
+    getRequestQueue().add(req);
+}
+public void cancelPendingRequests(Object tag) {
+    if (mRequestQueue != null) {
+        mRequestQueue.cancelAll(tag);
+    }
+}
+</code></pre>
+
+<p>}</p>
+
+<p>Then You have to Add this class to your manifest file.So inside the Application tag put the name of class.</p>
+
+<p></p>
+
+<p>And also make shure add internet permission in to your application.</p>
+
+<p></p>
+
+<p>Then inside main activity i have one button and when i click button it will read json object and show in to textview.I have used this public json call to show demo.(<a href="http://time.jsontest.com/">http://time.jsontest.com/</a>) it will return date, time and other parameter inside json object.</p>
+
+<p>date:- String
+mili seconds :- Double
+time:- String</p>
+
+<p>when button clicked it called to this method.</p>
+
+<p>/**
+     *  Send request
+     */</p>
+
+<pre><code>private void makeJsonObjectRequest() {
+    showpDialog();
+    JsonObjectRequest jsonObjReq = new JsonObjectRequest(Method.GET,
+            urlJsonObj, null, new Response.Listener&lt;JSONObject&gt;() {
+        @Override
+
+        public void onResponse(JSONObject response) {
+            try {
+                // Parsing json object response
+                // response will be a json object
+                String time = response.getString("time");
+                Double mili = response.getDouble("milliseconds_since_epoch");
+                String date = response.getString("date");
+                jsonResponse = "";
+                jsonResponse += "Time: " + time + "\n\n";
+                jsonResponse += "seconds: " + mili + "\n\n";
+                jsonResponse += "Date: " + date + "\n\n";
+                txtResponse.setText(jsonResponse);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(getApplicationContext(),
+                        "Error: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
+            hidepDialog();
+
+        }
+
+    }, new Response.ErrorListener() {
+
+        @Override
+
+        public void onErrorResponse(VolleyError error) {
+            Toast.makeText(getApplicationContext(),
+                    error.getMessage(), Toast.LENGTH_SHORT).show();
+            // hide the progress dialog
+            hidepDialog();
+
+        }
+
+    });
+    // Adding request to request queue
+    AppController.getInstance().addToRequestQueue(jsonObjReq);
+
+}
+</code></pre>
+
+<p>In this method hideDialog and showDialog methods used to add progressDialog.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Android volley sample maintained by <a href="https://github.com/sajith4u">sajith4u</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("002");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+
+  </body>
+</html>
